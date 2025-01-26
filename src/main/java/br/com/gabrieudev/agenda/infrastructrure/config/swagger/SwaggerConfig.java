@@ -23,7 +23,7 @@ public class SwaggerConfig {
                                                 .version("v0.0.1")
                                                 .license(new License().name("Apache 2.0").url("http://springdoc.org")))
                                 .servers(List.of(
-                                                new Server().url("https://agenda-production.up.railway.app/api/v1")
+                                                new Server().url("https://agenda-9cx0.onrender.com/api/v1")
                                                                 .description("Servidor de Produção"),
                                                 new Server().url("http://localhost:8080/api/v1")
                                                                 .description("Servidor Local")))
