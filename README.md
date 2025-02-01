@@ -42,15 +42,23 @@ git clone https://github.com/gabrieudev/agenda.git
 
 <h3>Variáveis de Ambiente</h3>
 
-Para executar a aplicação, você precisará definir duas varáveis de ambiente relacionadas à sua conta Google que será utilizada para enviar as notificações: e-mail e [senha de app](https://support.google.com/accounts/answer/185833?hl=pt-BR).
+Para executar a aplicação, você precisará criar um arquivo `.env` contendo as seguintes variáveis de ambiente relacionadas à sua conta Google, que será utilizada para enviar as notificações:
+
+```bash
+EMAIL_USERNAME=<EMAIL>
+EMAIL_PASSWORD=<SENHA_DE_APP>
+PROFILE=dev
+```
+
+> Caso não saiba como obter as senhas de app, a [Central de Ajuda](https://support.google.com/accounts/answer/185833?hl=pt-BR) Google pode te ajudar.
 
 <h3>Inicializando</h3>
 
-Execute os seguintes comandos inserindo as duas variáveis:
+Execute os seguintes comandos:
 
 ```bash
 cd agenda
-EMAIL_USERNAME=<email> EMAIL_PASSWORD<senha_de_app> PROFILE=dev docker compose up -d
+docker compose up -d
 ```
 
 <h2 id="como-usar">🔁 Como usar</h2>
