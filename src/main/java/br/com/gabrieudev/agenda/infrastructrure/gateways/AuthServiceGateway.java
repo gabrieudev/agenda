@@ -3,6 +3,7 @@ package br.com.gabrieudev.agenda.infrastructrure.gateways;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -93,15 +94,16 @@ public class AuthServiceGateway implements AuthGateway {
     }
 
     @Override
-    public String refresh(String refreshToken) {
+    public Map<String, String> refresh(String refreshToken) {
         try {
             var jwt = jwtDecoder.decode(refreshToken);
             UserModel user = userRepository.findById(UUID.fromString(jwt.getSubject()))
                     .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
 
-            String token = generateAccessToken(user.toDomainObj());
+            String accessToken = generateAccessToken(user.toDomainObj());
+            String newRefreshToken = generateRefreshToken(user.toDomainObj());
 
-            return token;
+            return Map.of("accessToken", accessToken, "refreshToken", newRefreshToken);
         } catch (Exception e) {
             throw new InvalidTokenException("Refresh token inválido");
         }

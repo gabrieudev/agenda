@@ -102,8 +102,8 @@ public class AuthController {
     }
 
     @Operation(
-        summary = "Atualizar token de acesso",
-        description = "Atualiza o token de acesso do usuário e retorna o token de acesso e o token de atualização",
+        summary = "Atualizar tokens",
+        description = "Atualiza os tokens do usuário",
         tags = "Auth"
     )
     @ApiResponses(
@@ -140,10 +140,10 @@ public class AuthController {
         @RequestBody 
         RefreshTokenRequest refreshTokenRequest
     ) {
-        String token = authInteractor.refresh(refreshTokenRequest.getRefreshToken());
+        Map<String, String> tokens = authInteractor.refresh(refreshTokenRequest.getRefreshToken());
         
         return ResponseEntity.status(HttpStatus.OK).body(new 
-        RefreshTokenResponse(token));
+        RefreshTokenResponse(tokens.get("accessToken"), tokens.get("refreshToken")));
     }
 
     @PreAuthorize("hasAuthority('SCOPE_USER')")

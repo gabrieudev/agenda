@@ -17,7 +17,7 @@ public class AuthInteractor {
         this.userGateway = userGateway;
     }
 
-    public String refresh(String refreshToken) {
+    public Map<String, String> refresh(String refreshToken) {
         if (!authGateway.isValid(refreshToken)) {
             throw new InvalidTokenException("Token inválido");
         }
