@@ -3,9 +3,6 @@ package br.com.gabrieudev.agenda.infrastructrure.web.controllers;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,7 +33,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/tasks")
+@RequestMapping("/commitments/{commitmentId}/tasks")
 public class TaskController {
     private final TaskInteractor taskInteractor;
 
@@ -246,12 +243,12 @@ public class TaskController {
         }
     )
     @GetMapping
-    public ResponseEntity<Page<TaskDTO>> findByCommitmentId(
+    public ResponseEntity<List<TaskDTO>> findByCommitmentId(
         @Parameter(
             name = "commitmentId",
             description = "Identificador do compromisso"
         )
-        @RequestParam(required = true) UUID commitmentId,
+        @PathVariable UUID commitmentId,
         
         @Parameter(
             name = "statusId",
@@ -260,31 +257,17 @@ public class TaskController {
         @RequestParam(required = false) UUID statusId,
         
         @Parameter(
-            name = "page",
-            description = "Página atual da paginação"
-        )
-        @RequestParam(required = true) Integer page,
-        
-        @Parameter(
-            name = "size",
-            description = "Quantidade de itens por página"
-        )
-        @RequestParam(required = true) Integer size,
-        
-        @Parameter(
             name = "param",
             description = "Parâmetro de busca"
         )
         @RequestParam(required = false) String param
     ) {
-        List<TaskDTO> tasks = taskInteractor.findByCommitmentId(commitmentId, statusId, param, page, size)
+        List<TaskDTO> tasks = taskInteractor.findByCommitmentId(commitmentId, statusId, param)
             .stream()
             .map(TaskDTO::from)
             .toList();
 
-        Page<TaskDTO> tasksPage = new PageImpl<>(tasks, PageRequest.of(page, size), tasks.size());
-
-        return ResponseEntity.status(HttpStatus.OK).body(tasksPage);
+        return ResponseEntity.status(HttpStatus.OK).body(tasks);
     }
 
     @PreAuthorize("hasAuthority('SCOPE_USER')")
