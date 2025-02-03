@@ -18,15 +18,15 @@ import br.com.gabrieudev.agenda.infrastructrure.persistence.models.TaskModel;
 public interface TaskRepository extends JpaRepository<TaskModel, UUID> {
         @Query(value = """
                         SELECT t
-                        FROM TaskModel t
-                        WHERE t.commitment.id = :p1
-                        AND (:p2 IS NULL OR t.status.id = :p2)
-                        AND (
-                                :p3 IS NULL
-                                OR LOWER(t.title) LIKE LOWER(CONCAT('%', :p3, '%'))
-                                OR LOWER(t.description) LIKE LOWER(CONCAT('%', :p3, '%'))
-                        )
-                        """)
+                        FROM tasks t
+                        LEFT JOIN commitments c
+                            ON t.commitment_id = c.id
+                        LEFT JOIN statuses s
+                            ON t.status_id = s.id
+                        WHERE t.commitment_id = :p1
+                        AND (:p2 IS NULL OR s.id = :p2)
+                        AND (:p3 IS NULL OR (LOWER(t.title) LIKE '%' || LOWER(:p3) || '%' OR LOWER(t.description) LIKE '%' || LOWER(:p3) || '%'))
+                        """, nativeQuery = true)
         Page<TaskModel> findByCommitmentId(
                         @Param("p1") UUID commitmentId,
                         @Param("p2") UUID statusId,

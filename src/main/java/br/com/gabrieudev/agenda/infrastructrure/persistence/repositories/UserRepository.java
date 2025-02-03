@@ -19,13 +19,10 @@ public interface UserRepository extends JpaRepository<UserModel, UUID> {
     Optional<UserModel> findByEmail(String email);
 
     @Query(value = """
-            SELECT u FROM UserModel u
-            WHERE
-                :p1 IS NULL
-                OR LOWER(u.email) LIKE LOWER(CONCAT('%',:p1,'%'))
-                OR LOWER(u.firstName) LIKE LOWER(CONCAT('%',:p1,'%'))
-                OR LOWER(u.lastName) LIKE LOWER(CONCAT('%',:p1,'%'))
-            """)
+                    SELECT u
+                    FROM users u
+                    WHERE (:p1 IS NULL OR LOWER(u.name) LIKE '%' || LOWER(:p1) || '%')
+                    """, nativeQuery = true)
     Page<UserModel> search(
             @Param("p1") String param,
             Pageable pageable);

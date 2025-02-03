@@ -24,15 +24,21 @@ public interface CommitmentRepository extends JpaRepository<CommitmentModel, UUI
     List<CommitmentModel> findByDueDateBeforeAndStatus(LocalDateTime dueDate, StatusModel status);
 
     @Query(value = """
-            SELECT c
-            FROM CommitmentModel c
-            WHERE c.user.id = :p1
-            AND (:p2 IS NULL OR c.category.id = :p2)
-            AND (:p3 IS NULL OR c.status.id = :p3)
-            AND :p4 IS NULL
-            OR LOWER(c.title) LIKE LOWER(CONCAT('%',:p4,'%'))
-            OR LOWER(c.description) LIKE LOWER(CONCAT('%',:p4,'%'))
-            """)
+            SELECT c.*
+            FROM commitments c
+            LEFT JOIN commitment_categories cc 
+                ON c.commitment_category_id = cc.id
+            LEFT JOIN statuses s 
+                ON c.status_id = s.id
+            WHERE c.user_id = :p1
+            AND (:p2 IS NULL OR cc.id = :p2)
+            AND (:p3 IS NULL OR s.id = :p3)
+            AND (
+                :p4 IS NULL OR
+                (LOWER(c.title) LIKE '%' || LOWER(:p4) || '%' OR
+                 LOWER(c.description) LIKE '%' || LOWER(:p4) || '%')
+            )
+                        """, nativeQuery = true)
     Page<CommitmentModel> findByUserId(
             @Param("p1") UUID userId,
             @Param("p2") UUID commitmentCategoryId,
