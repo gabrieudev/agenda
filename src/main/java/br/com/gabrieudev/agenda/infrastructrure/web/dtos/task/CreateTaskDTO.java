@@ -4,7 +4,6 @@ import org.modelmapper.ModelMapper;
 
 import br.com.gabrieudev.agenda.domain.entities.Task;
 import br.com.gabrieudev.agenda.infrastructrure.web.dtos.commitment.CommitmentDTO;
-import br.com.gabrieudev.agenda.infrastructrure.web.dtos.status.StatusDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,9 +32,6 @@ public class CreateTaskDTO {
     
     @NotNull(message = "Compromisso obrigatório")
     private CommitmentDTO commitment;
-
-    @NotNull(message = "Status obrigatório")
-    private StatusDTO status;
 
     public Task toDomainObj() {
         return new ModelMapper().map(this, Task.class);
