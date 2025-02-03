@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,21 +15,18 @@ import br.com.gabrieudev.agenda.infrastructrure.persistence.models.TaskModel;
 @Repository
 public interface TaskRepository extends JpaRepository<TaskModel, UUID> {
         @Query(value = """
-                        SELECT t
+                        SELECT t.*
                         FROM tasks t
-                        LEFT JOIN commitments c
-                            ON t.commitment_id = c.id
-                        LEFT JOIN statuses s
-                            ON t.status_id = s.id
-                        WHERE t.commitment_id = :p1
-                        AND (:p2 IS NULL OR s.id = :p2)
-                        AND (:p3 IS NULL OR (LOWER(t.title) LIKE '%' || LOWER(:p3) || '%' OR LOWER(t.description) LIKE '%' || LOWER(:p3) || '%'))
+                        LEFT JOIN commitments c ON t.commitment_id = c.id
+                        LEFT JOIN statuses s ON t.status_id = s.id
+                        WHERE t.commitment_id = :commitmentId
+                        AND (:statusId IS NULL OR s.id = :statusId)
+                        AND (:searchParam IS NULL OR (LOWER(t.title) LIKE '%' || LOWER(:searchParam) || '%' OR LOWER(t.description) LIKE '%' || LOWER(:searchParam) || '%'))
                         """, nativeQuery = true)
-        Page<TaskModel> findByCommitmentId(
-                        @Param("p1") UUID commitmentId,
-                        @Param("p2") UUID statusId,
-                        @Param("p3") String searchParam,
-                        Pageable pageable);
+        List<TaskModel> findByCommitmentId(
+                        @Param("commitmentId") UUID commitmentId,
+                        @Param("statusId") UUID statusId,
+                        @Param("searchParam") String searchParam);
 
         @Query(value = """
                         SELECT t

@@ -50,8 +50,8 @@ public class TaskInteractor {
         return taskGateway.existsByStatusId(statusId);
     }
 
-    public List<Task> findByCommitmentId(UUID commitmentId, UUID statusId, String param, Integer page, Integer size) {
-        return taskGateway.findByCommitmentId(commitmentId, statusId, param, page, size);
+    public List<Task> findByCommitmentId(UUID commitmentId, UUID statusId, String param) {
+        return taskGateway.findByCommitmentId(commitmentId, statusId, param);
     }
 
     public List<Task> findByUserIdAndStatusIdAndUpdatedBetween(UUID userId, UUID statusId, LocalDateTime startDate, LocalDateTime endDate) {

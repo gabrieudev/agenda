@@ -13,6 +13,6 @@ public interface TaskGateway {
     boolean existsById(UUID id);
     boolean existsByStatusId(UUID statusId);
     void deleteById(UUID id);
-    List<Task> findByCommitmentId(UUID commitmentId, UUID statusId, String param, Integer page, Integer size);
+    List<Task> findByCommitmentId(UUID commitmentId, UUID statusId, String param);
     List<Task> findByUserIdAndStatusIdAndUpdatedBetween(UUID userId, UUID statusId, LocalDateTime startDate, LocalDateTime endDate);
 }

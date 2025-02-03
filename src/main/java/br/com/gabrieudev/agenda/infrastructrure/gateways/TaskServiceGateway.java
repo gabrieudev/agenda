@@ -6,8 +6,6 @@ import java.util.UUID;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,10 +62,8 @@ public class TaskServiceGateway implements TaskGateway {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Task> findByCommitmentId(UUID commitmentId, UUID statusId, String param, Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-
-        return taskRepository.findByCommitmentId(commitmentId, statusId, param, pageable)
+    public List<Task> findByCommitmentId(UUID commitmentId, UUID statusId, String param) {
+        return taskRepository.findByCommitmentId(commitmentId, statusId, param)
             .stream()
             .map(TaskModel::toDomainObj)
             .toList();
