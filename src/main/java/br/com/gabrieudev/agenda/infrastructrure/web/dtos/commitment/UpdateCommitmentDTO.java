@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 
 import br.com.gabrieudev.agenda.domain.entities.Commitment;
 import br.com.gabrieudev.agenda.infrastructrure.web.dtos.commitmentcategory.CommitmentCategoryDTO;
+import br.com.gabrieudev.agenda.infrastructrure.web.dtos.status.StatusDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
@@ -44,6 +45,9 @@ public class UpdateCommitmentDTO {
     
     @NotNull(message = "Categoria obrigatória")
     private CommitmentCategoryDTO category;
+
+    @NotNull(message = "Status obrigatório")
+    private StatusDTO status;
     
     @Schema(
         description = "Data de vencimento do compromisso",

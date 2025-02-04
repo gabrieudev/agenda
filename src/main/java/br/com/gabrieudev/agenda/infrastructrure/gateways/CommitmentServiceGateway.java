@@ -147,6 +147,14 @@ public class CommitmentServiceGateway implements CommitmentGateway {
         CommitmentModel commitmentToUpdate = commitmentRepository.findById(commitment.getId())
             .orElseThrow(() -> new EntityNotFoundException("Compromisso não encontrado"));
 
+        StatusModel currentStatus = commitmentToUpdate.getStatus();
+        StatusModel newStatus = statusRepository.findById(commitment.getStatus().getId())
+            .orElseThrow(() -> new EntityNotFoundException("Status não encontrado"));
+
+        if (!currentStatus.equals(newStatus)) {
+            commitmentToUpdate.setStatus(newStatus);
+        }
+
         commitmentToUpdate.update(commitment);
 
         return commitmentRepository.save(commitmentToUpdate).toDomainObj();

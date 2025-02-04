@@ -91,12 +91,16 @@ public class TaskServiceGateway implements TaskGateway {
     @CacheEvict(value = "Tasks", key = "#task.commitmentId")
     @Transactional
     public Task update(Task task) {
-        if (!taskRepository.existsById(task.getId())) {
-            throw new EntityNotFoundException("Task não encontrado");
-        }
-
         TaskModel taskToUpdate = taskRepository.findById(task.getId())
             .orElseThrow(() -> new EntityNotFoundException("Task não encontrado"));
+
+        StatusModel currentStatus = taskToUpdate.getStatus();
+        StatusModel newStatus = statusRepository.findById(task.getStatus().getId())
+            .orElseThrow(() -> new EntityNotFoundException("Status não encontrado"));
+
+        if (!currentStatus.equals(newStatus)) {
+            taskToUpdate.setStatus(newStatus);
+        }
 
         taskToUpdate.update(task);
 
