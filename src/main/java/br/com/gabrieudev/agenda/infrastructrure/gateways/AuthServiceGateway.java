@@ -116,7 +116,7 @@ public class AuthServiceGateway implements AuthGateway {
             var jwt = jwtDecoder.decode(token);
             String userId = jwt.getSubject();
 
-            return redisTemplate.hasKey("refreshToken:" + userId) && redisTemplate.hasKey("accessToken:" + userId + ":" + jwt.getTokenValue());
+            return redisTemplate.hasKey("refreshToken:" + userId) || redisTemplate.hasKey("accessToken:" + userId + ":" + jwt.getTokenValue());
         } catch (Exception e) {
             return false;
         }
