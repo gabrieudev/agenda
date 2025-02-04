@@ -18,7 +18,7 @@ public class CorsConfig {
         
         config.setAllowCredentials(true);
         
-        config.setAllowedOriginPatterns(Arrays.asList("https://emporium-production.up.railway.app", "https://vercel.com/gabriels-projects-b2b615c6/agenda-front/DKf9EERCNKhUXxdpzPZs16A1coDg"));
+        config.setAllowedOriginPatterns(Arrays.asList("https://emporium-production.up.railway.app", "https://agenda-front-eta.vercel.app/"));
 
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
         
