@@ -2,6 +2,7 @@ package br.com.gabrieudev.agenda.infrastructrure.config.swagger;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +15,8 @@ import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 public class SwaggerConfig {
+        @Value("${api.base-url}")
+        private String apiUrl;
 
         @Bean
         OpenAPI agendaOpenAPI() {
@@ -23,10 +26,8 @@ public class SwaggerConfig {
                                                 .version("v0.0.1")
                                                 .license(new License().name("Apache 2.0").url("http://springdoc.org")))
                                 .servers(List.of(
-                                                new Server().url("https://agenda-9cx0.onrender.com/api/v1")
-                                                                .description("Servidor de Produção"),
-                                                new Server().url("http://localhost:8080/api/v1")
-                                                                .description("Servidor Local")))
+                                                new Server().url(apiUrl)
+                                                                .description("Servidor da API")))
                                 .components(new io.swagger.v3.oas.models.Components()
                                                 .addSecuritySchemes("BearerAuth", new SecurityScheme()
                                                                 .type(SecurityScheme.Type.HTTP)

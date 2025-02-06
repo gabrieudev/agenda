@@ -20,6 +20,8 @@ services:
       - EMAIL_PORT=${EMAIL_PORT:-587}
       - EMAIL_USERNAME=${EMAIL_USERNAME}
       - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - API_BASE_URL=${API_BASE_URL:-http://localhost:8080/api/v1}
+      - FRONTEND_BASE_URL=${FRONTEND_BASE_URL:-http://localhost:3000}
     networks:
       - app-network
     depends_on:

@@ -61,7 +61,12 @@ public class SecurityConfig {
                                 "/users/signup",
                                 "/auth/signin",
                                 "/auth/refresh-token",
-                                "/stripe/webhook")
+                                "/stripe/webhook",
+                                "/users/email/send")
+                        .permitAll()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                    "/users/confirm")
                         .permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",

@@ -2,6 +2,7 @@ package br.com.gabrieudev.agenda.infrastructrure.config.security;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -10,6 +11,10 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 public class CorsConfig {
+    @Value("${api.base-url}")
+    private String apiUrl;
+    @Value("${frontend.base-url}")
+    private String frontendUrl;
 
     @Bean
     CorsFilter corsFilter() {
@@ -18,7 +23,7 @@ public class CorsConfig {
         
         config.setAllowCredentials(true);
         
-        config.setAllowedOriginPatterns(Arrays.asList("https://emporium-production.up.railway.app", "https://agenda-front-eta.vercel.app"));
+        config.setAllowedOriginPatterns(Arrays.asList(apiUrl, frontendUrl));
 
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
         
