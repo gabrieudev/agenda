@@ -47,7 +47,6 @@ Para executar a aplicação, você precisará criar um arquivo `.env` contendo a
 ```bash
 EMAIL_USERNAME=<EMAIL>
 EMAIL_PASSWORD=<SENHA_DE_APP>
-PROFILE=dev
 ```
 
 > Caso não saiba como obter as senhas de app, a [Central de Ajuda](https://support.google.com/accounts/answer/185833?hl=pt-BR) Google pode te ajudar.
