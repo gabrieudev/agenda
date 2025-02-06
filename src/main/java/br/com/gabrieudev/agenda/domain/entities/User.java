@@ -10,6 +10,7 @@ public class User implements Serializable {
     private String lastName;
     private String email;
     private String password;
+    private Boolean isActive;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
@@ -52,23 +53,28 @@ public class User implements Serializable {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
-
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+    public Boolean getIsActive() {
+        return isActive;
+    }
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
 
-    public User(UUID id, String firstName, String lastName, String email, String password, LocalDateTime createdAt,
-            LocalDateTime updatedAt) {
+    public User(UUID id, String firstName, String lastName, String email, String password, Boolean isActive,
+            LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.isActive = isActive;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-
+    
     public User() {
     }
-    
 }

@@ -1,11 +1,14 @@
 package br.com.gabrieudev.agenda.infrastructrure.gateways;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Service;
@@ -17,17 +20,24 @@ import br.com.gabrieudev.agenda.application.gateways.UserGateway;
 import br.com.gabrieudev.agenda.domain.entities.User;
 import br.com.gabrieudev.agenda.infrastructrure.persistence.models.UserModel;
 import br.com.gabrieudev.agenda.infrastructrure.persistence.repositories.UserRepository;
+import br.com.gabrieudev.agenda.infrastructrure.service.EmailService;
 
 @Service
 public class UserServiceGateway implements UserGateway {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtDecoder jwtDecoder;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final EmailService emailService;
+    @Value("${api.base-url}")
+    private String baseUrl;
 
-    public UserServiceGateway(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, JwtDecoder jwtDecoder) {
+    public UserServiceGateway(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, JwtDecoder jwtDecoder, RedisTemplate<String, Object> redisTemplate, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtDecoder = jwtDecoder;
+        this.redisTemplate = redisTemplate;
+        this.emailService = emailService;
     }
 
     @Override
@@ -82,7 +92,44 @@ public class UserServiceGateway implements UserGateway {
     @CacheEvict(value = "Users", key = "#user.id")
     @Transactional
     public User signup(User user) {
-        return userRepository.save(UserModel.fromDomainObj(user)).toDomainObj();
+        User savedUser = userRepository.save(UserModel.fromDomainObj(user)).toDomainObj();
+        
+        return savedUser;
+    }
+
+    @Override
+    public void sendConfirmationEmail(UUID userId) {
+        User user = findById(userId);
+
+        UUID code = UUID.randomUUID();
+
+        redisTemplate.opsForValue().set("code:" + code.toString(), user.getId().toString(), Duration.ofMinutes(5));
+
+        String url = baseUrl + "/users/confirm?code=" + code.toString();
+
+        String emailMessage = String.format("Olá, %s. Por favor, clique no link abaixo para confirmar seu cadastro: %s", user.getFirstName(), url);
+
+        emailService.sendEmail(user.getEmail(), "Confirmação de cadastro", emailMessage);
+    }
+
+    @Override
+    @Transactional
+    public void confirm(UUID code) {
+        String userId = (String) redisTemplate.opsForValue().get("code:" + code.toString());
+    
+        if (userId == null) {
+            throw new EntityNotFoundException("Código de confirmação inválido.");
+        }
+    
+        redisTemplate.delete("code:" + code.toString());
+    
+        User user = findById(UUID.fromString(userId));
+    
+        user.setIsActive(Boolean.TRUE);
+
+        update(user);
+
+        emailService.sendEmail(user.getEmail(), "Confirmação de cadastro", "Seu cadastro foi confirmado com sucesso.");
     }
 
     @Override

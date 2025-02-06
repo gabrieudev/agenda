@@ -7,6 +7,8 @@ import br.com.gabrieudev.agenda.domain.entities.User;
 
 public interface UserGateway {
     User signup(User user);
+    void sendConfirmationEmail(UUID id);
+    void confirm(UUID code);
     User findByEmail(String email);
     User findById(UUID id);
     User findByToken(String token);

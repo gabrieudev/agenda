@@ -32,6 +32,7 @@ public class UserInteractor {
         
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
+        user.setIsActive(Boolean.FALSE);
 
         User createdUser = userGateway.signup(user);
 
@@ -39,7 +40,17 @@ public class UserInteractor {
         
         usersRolesGateway.create(new UsersRoles(null, createdUser, basicRole));
 
+        sendConfirmationEmail(createdUser.getId());
+        
         return createdUser;
+    }
+
+    public void confirm(UUID code) {
+        userGateway.confirm(code);
+    }
+
+    public void sendConfirmationEmail(UUID id) {
+        userGateway.sendConfirmationEmail(id);
     }
 
     public User findById(UUID id) {

@@ -44,6 +44,7 @@ public class DatabaseLoader implements CommandLineRunner {
             user.setPassword(passwordEncoder.encode("adminpassword"));
             user.setCreatedAt(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
+            user.setIsActive(Boolean.TRUE);
 
             RoleModel adminRole = new RoleModel();
             adminRole.setName("ADMIN");

@@ -1,8 +1,10 @@
 package br.com.gabrieudev.agenda.infrastructrure.web.controllers;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -55,6 +57,8 @@ public class UserController {
     private final CommitmentInteractor commitmentInteractor;
     private final StatusInteractor statusInteractor;
     private final TaskInteractor taskInteractor;
+    @Value("${frontend.base-url}")
+    private String frontendUrl;
 
     public UserController(UserInteractor userInteractor, UsersRolesInteractor usersRolesInteractor,
             CommitmentInteractor commitmentInteractor, StatusInteractor statusInteractor,
@@ -68,7 +72,7 @@ public class UserController {
 
     @Operation(
         summary = "Cadastrar usuário",
-        description = "Cadastra um usuário de acordo com o corpo da requisição",
+        description = "Cadastra um usuário e envia um email de confirmação para seu email de acordo com o corpo da requisição",
         tags = "Users"
     )
     @ApiResponses(
@@ -576,6 +580,103 @@ public class UserController {
             .toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(new ReportDTO(commitments, tasks));
+    }
+
+    @Operation(
+        summary = "Confirmar usuário",
+        description = "Confirma um usuário de acordo com o código de confirmação",
+        tags = "Users"
+    )
+    @ApiResponses(
+        value = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Usuário confirmado"
+            ),
+            @ApiResponse(
+                responseCode = "404",
+                description = "Código não encontrado",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                        implementation = StandardException.class
+                    )
+                )
+            ),
+            @ApiResponse(
+                responseCode = "500",
+                description = "Erro interno",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                        implementation = StandardException.class
+                    )
+                )
+            ),
+        }
+    )
+    @GetMapping("/confirm")
+    public ResponseEntity<Void> confirm(
+        @Parameter(
+            name = "code",
+            description = "Código de confirmação"
+        )
+        @RequestParam(required = true) UUID code
+    ) {
+        userInteractor.confirm(code);
+        return ResponseEntity.status(HttpStatus.FOUND)
+            .location(URI.create(frontendUrl))
+            .build();
+    }
+
+    @GetMapping("/confirm/success")
+    public String success() {
+        return "redirect:/user/confirm/success.html";
+    }
+
+    @Operation(
+        summary = "Reenviar email para confirmação do cadastro",
+        description = "Envia um novo email para confirmação de cadastro de acordo com o ID do usuário",
+        tags = "Users"
+    )
+    @ApiResponses(
+        value = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Email enviado"
+            ),
+            @ApiResponse(
+                responseCode = "404",
+                description = "Usuário não encontrado",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                        implementation = StandardException.class
+                    )
+                )
+            ),
+            @ApiResponse(
+                responseCode = "500",
+                description = "Erro interno",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                        implementation = StandardException.class
+                    )
+                )
+            )
+        }
+    )
+    @PostMapping("/email/send")
+    public ResponseEntity<Void> send(
+        @Parameter(
+            name = "id",
+            description = "Identificador do usuário"
+        )
+        @RequestParam UUID id
+    ) {
+        userInteractor.sendConfirmationEmail(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
     
 }

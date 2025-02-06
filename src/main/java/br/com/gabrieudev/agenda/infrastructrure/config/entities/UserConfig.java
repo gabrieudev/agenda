@@ -2,6 +2,7 @@ package br.com.gabrieudev.agenda.infrastructrure.config.entities;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 
@@ -11,6 +12,7 @@ import br.com.gabrieudev.agenda.application.gateways.UsersRolesGateway;
 import br.com.gabrieudev.agenda.application.usecases.UserInteractor;
 import br.com.gabrieudev.agenda.infrastructrure.gateways.UserServiceGateway;
 import br.com.gabrieudev.agenda.infrastructrure.persistence.repositories.UserRepository;
+import br.com.gabrieudev.agenda.infrastructrure.service.EmailService;
 
 @Configuration
 public class UserConfig {
@@ -20,7 +22,7 @@ public class UserConfig {
     }
 
     @Bean
-    UserGateway userGateway(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, JwtDecoder jwtDecoder) {
-        return new UserServiceGateway(userRepository, passwordEncoder, jwtDecoder);
+    UserGateway userGateway(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, JwtDecoder jwtDecoder, RedisTemplate<String, Object> redisTemplate, EmailService emailService) {
+        return new UserServiceGateway(userRepository, passwordEncoder, jwtDecoder, redisTemplate, emailService);
     }
 }
