@@ -629,11 +629,6 @@ public class UserController {
             .build();
     }
 
-    @GetMapping("/confirm/success")
-    public String success() {
-        return "redirect:/user/confirm/success.html";
-    }
-
     @Operation(
         summary = "Reenviar email para confirmação do cadastro",
         description = "Envia um novo email para confirmação de cadastro de acordo com o ID do usuário",
@@ -667,13 +662,13 @@ public class UserController {
             )
         }
     )
-    @PostMapping("/email/send")
+    @PostMapping("/{id}/email-confirmation")
     public ResponseEntity<Void> send(
         @Parameter(
-            name = "id",
-            description = "Identificador do usuário"
+            description = "Identificador do usuário",
+            example = "123e4567-e89b-12d3-a456-426614174000"
         )
-        @RequestParam UUID id
+        @PathVariable UUID id
     ) {
         userInteractor.sendConfirmationEmail(id);
         return ResponseEntity.status(HttpStatus.OK).build();

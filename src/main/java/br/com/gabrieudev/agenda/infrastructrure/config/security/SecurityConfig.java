@@ -62,7 +62,7 @@ public class SecurityConfig {
                                 "/auth/signin",
                                 "/auth/refresh-token",
                                 "/stripe/webhook",
-                                "/users/email/send")
+                                "/users/{id}/email-confirmation")
                         .permitAll()
                         .requestMatchers(
                                 HttpMethod.GET,
