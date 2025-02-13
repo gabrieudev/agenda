@@ -8,48 +8,32 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.gabrieudev.agenda.application.exceptions.EntityNotFoundException;
-import br.com.gabrieudev.agenda.application.exceptions.InvalidTokenException;
 import br.com.gabrieudev.agenda.application.gateways.NotificationGateway;
 import br.com.gabrieudev.agenda.domain.entities.Notification;
+import br.com.gabrieudev.agenda.infrastructrure.persistence.models.CommitmentModel;
 import br.com.gabrieudev.agenda.infrastructrure.persistence.models.NotificationModel;
-import br.com.gabrieudev.agenda.infrastructrure.persistence.models.UserModel;
+import br.com.gabrieudev.agenda.infrastructrure.persistence.repositories.CommitmentRepository;
 import br.com.gabrieudev.agenda.infrastructrure.persistence.repositories.NotificationRepository;
-import br.com.gabrieudev.agenda.infrastructrure.persistence.repositories.UserRepository;
 
 @Service
 public class NotificationServiceGateway implements NotificationGateway {
     private final NotificationRepository notificationRepository;
-    private final UserRepository userRepository;
-    private final JwtDecoder jwtDecoder;
-
-    public NotificationServiceGateway(NotificationRepository notificationRepository, UserRepository userRepository, JwtDecoder jwtDecoder) {
+    private final CommitmentRepository commitmentRepository;
+    
+    public NotificationServiceGateway(NotificationRepository notificationRepository, CommitmentRepository commitmentRepository) {
         this.notificationRepository = notificationRepository;
-        this.userRepository = userRepository;
-        this.jwtDecoder = jwtDecoder;
+        this.commitmentRepository = commitmentRepository;
     }
 
     @Override
     @CacheEvict(value = "Notifications", key = "#notification.id")
     @Transactional
-    public Notification create(Notification notification, String token) {
-        try {
-            var jwt = jwtDecoder.decode(token);
-            String userId = jwt.getSubject();
-
-            UserModel user = userRepository.findById(UUID.fromString(userId))
-                    .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
-
-            notification.setUser(user.toDomainObj());
-
-            return notificationRepository.save(NotificationModel.from(notification)).toDomainObj();
-        } catch (Exception e) {
-            throw new InvalidTokenException("Token inválido");
-        }
+    public Notification create(Notification notification) {
+        return notificationRepository.save(NotificationModel.from(notification)).toDomainObj();
     }
 
     @Override
@@ -89,11 +73,12 @@ public class NotificationServiceGateway implements NotificationGateway {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Notification> findByUserId(UUID userId, Integer page, Integer size) {
+    public List<Notification> findByCommitmentId(UUID commitmentId,Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
-        UserModel user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        CommitmentModel commitment = commitmentRepository.findById(commitmentId)
+                .orElseThrow(() -> new EntityNotFoundException("Compromisso não encontrado"));
 
-        return notificationRepository.findByUser(user, pageable)
+        return notificationRepository.findByCommitment(commitment,pageable)
                 .stream()
                 .map(NotificationModel::toDomainObj)
                 .toList();

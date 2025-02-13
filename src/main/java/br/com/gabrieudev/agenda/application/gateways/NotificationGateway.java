@@ -7,10 +7,10 @@ import java.util.UUID;
 import br.com.gabrieudev.agenda.domain.entities.Notification;
 
 public interface NotificationGateway {
-    Notification create(Notification notification, String token);
+    Notification create(Notification notification);
     Notification update(Notification notification);
     Notification findById(UUID id);
-    List<Notification> findByUserId(UUID userId, Integer page, Integer size);
+    List<Notification> findByCommitmentId(UUID commitmentId, Integer page, Integer size);
     List<Notification> findByDueDateBeforeAndIsSendedFalse(LocalDateTime dueDate);
     boolean existsById(UUID id);
     void deleteById(UUID id);

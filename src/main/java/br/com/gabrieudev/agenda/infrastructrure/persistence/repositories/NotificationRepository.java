@@ -9,11 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import br.com.gabrieudev.agenda.infrastructrure.persistence.models.CommitmentModel;
 import br.com.gabrieudev.agenda.infrastructrure.persistence.models.NotificationModel;
-import br.com.gabrieudev.agenda.infrastructrure.persistence.models.UserModel;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<NotificationModel, UUID> {
-    Page<NotificationModel> findByUser(UserModel user, Pageable pageable);
+    Page<NotificationModel> findByCommitment(CommitmentModel commitment, Pageable pageable);
     List<NotificationModel> findByDueDateBeforeAndIsSendedFalse(LocalDateTime dueDate);
 }

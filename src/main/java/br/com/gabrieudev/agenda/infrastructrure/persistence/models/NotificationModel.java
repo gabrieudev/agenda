@@ -34,8 +34,8 @@ public class NotificationModel {
     private String message;
     
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserModel user;
+    @JoinColumn(name = "commitment_id")
+    private CommitmentModel commitment;
     
     @Column(name = "due_date", nullable = false)
     private LocalDateTime dueDate;

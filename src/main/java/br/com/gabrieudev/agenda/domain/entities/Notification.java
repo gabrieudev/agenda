@@ -6,7 +6,7 @@ import java.util.UUID;
 public class Notification {
     private UUID id;
     private String message;
-    private User user;
+    private Commitment commitment;
     private Boolean isSended;
     private LocalDateTime dueDate;
     private LocalDateTime createdAt;
@@ -23,12 +23,6 @@ public class Notification {
     }
     public void setMessage(String message) {
         this.message = message;
-    }
-    public User getUser() {
-        return user;
-    }
-    public void setUser(User user) {
-        this.user = user;
     }
     public LocalDateTime getCreatedAt() {
         return createdAt;
@@ -54,18 +48,25 @@ public class Notification {
     public void setIsSended(Boolean isSended) {
         this.isSended = isSended;
     }
+    public Commitment getCommitment() {
+        return commitment;
+    }
+    public void setCommitment(Commitment commitment) {
+        this.commitment = commitment;
+    }
     
-    public Notification(UUID id, String message, User user, Boolean isSended, LocalDateTime dueDate,
+    public Notification(UUID id, String message, Commitment commitment, Boolean isSended, LocalDateTime dueDate,
             LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.message = message;
-        this.user = user;
+        this.commitment = commitment;
         this.isSended = isSended;
         this.dueDate = dueDate;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-
+    
     public Notification() {
     }
+    
 }

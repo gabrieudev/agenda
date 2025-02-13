@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.modelmapper.ModelMapper;
 
 import br.com.gabrieudev.agenda.domain.entities.Notification;
-import br.com.gabrieudev.agenda.infrastructrure.web.dtos.user.UserDTO;
+import br.com.gabrieudev.agenda.infrastructrure.web.dtos.commitment.CommitmentDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class NotificationDTO {
     private UUID id;
     private String message;
-    private UserDTO user;
+    private CommitmentDTO commitment;
     private Boolean isSended;
     private LocalDateTime dueDate;
     private LocalDateTime createdAt;

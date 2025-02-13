@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 
 import br.com.gabrieudev.agenda.domain.entities.Notification;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,7 @@ public class UpdateNotificationDTO {
         required = true
     )
     @NotNull(message = "Data de vencimento obrigatória")
+    @Future(message = "Data de vencimento deve ser futura")
     private LocalDateTime dueDate;
 
     public Notification toDomainObj() {

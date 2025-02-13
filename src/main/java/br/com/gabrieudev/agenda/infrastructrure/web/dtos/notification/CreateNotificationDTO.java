@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import org.modelmapper.ModelMapper;
 
 import br.com.gabrieudev.agenda.domain.entities.Notification;
+import br.com.gabrieudev.agenda.infrastructrure.web.dtos.commitment.CommitmentDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -23,6 +25,9 @@ public class CreateNotificationDTO {
     )
     @NotBlank(message = "Mensagem obrigatória")
     private String message;
+
+    @NotNull(message = "Compromisso obrigatório")
+    private CommitmentDTO commitment;
     
     @Schema(
         description = "Data de vencimento da notificação",
@@ -30,6 +35,7 @@ public class CreateNotificationDTO {
         required = true
     )
     @NotNull(message = "Data de vencimento obrigatória")
+    @Future(message = "Data de vencimento deve ser futura")
     private LocalDateTime dueDate;
 
     public Notification toDomainObj() {

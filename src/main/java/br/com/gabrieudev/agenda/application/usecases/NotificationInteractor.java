@@ -14,12 +14,12 @@ public class NotificationInteractor {
         this.notificationGateway = notificationGateway;
     }
 
-    public Notification create(Notification notification, String token) {
+    public Notification create(Notification notification) {
         notification.setCreatedAt(LocalDateTime.now());
         notification.setUpdatedAt(LocalDateTime.now());
         notification.setIsSended(Boolean.FALSE);
 
-        return notificationGateway.create(notification, token);
+        return notificationGateway.create(notification);
     }
 
     public Notification update(Notification notification) {
@@ -40,8 +40,8 @@ public class NotificationInteractor {
         return notificationGateway.existsById(id);
     }
 
-    public List<Notification> findByUserId(UUID userId, Integer page, Integer size) {
-        return notificationGateway.findByUserId(userId, page, size);
+    public List<Notification> findByCommitmentId(UUID commitmentId, Integer page, Integer size) {
+        return notificationGateway.findByCommitmentId(commitmentId, page, size);
     }
 
     public List<Notification> findByDueDateBeforeAndIsSendedFalse(LocalDateTime dueDate) {

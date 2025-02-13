@@ -14,16 +14,15 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.gabrieudev.agenda.application.exceptions.StandardException;
-import br.com.gabrieudev.agenda.application.usecases.NotificationInteractor;
-import br.com.gabrieudev.agenda.infrastructrure.web.dtos.notification.CreateNotificationDTO;
-import br.com.gabrieudev.agenda.infrastructrure.web.dtos.notification.NotificationDTO;
+import br.com.gabrieudev.agenda.application.usecases.NotificationGuestInteractor;
+import br.com.gabrieudev.agenda.infrastructrure.web.dtos.notificationguest.CreateNotificationGuestDTO;
+import br.com.gabrieudev.agenda.infrastructrure.web.dtos.notificationguest.NotificationGuestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,26 +34,26 @@ import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/notifications")
-public class NotificationController {
-    private final NotificationInteractor notificationInteractor;
+@RequestMapping("/guest/notifications")
+public class NotificationGuestController {
+    private final NotificationGuestInteractor notificationGuestInteractor;
 
-    public NotificationController(NotificationInteractor notificationInteractor) {
-        this.notificationInteractor = notificationInteractor;
+    public NotificationGuestController(NotificationGuestInteractor notificationGuestInteractor) {
+        this.notificationGuestInteractor = notificationGuestInteractor;
     }
 
     @PreAuthorize("hasAuthority('SCOPE_USER')")
     @Operation(
-        summary = "Criar notificação",
-        description = "Cria uma notificação de acordo com o corpo da requisição",
-        tags = "Notifications",
+        summary = "Criar convite para notificação",
+        description = "Cria um convite para notificação de acordo com o corpo da requisição",
+        tags = "NotificationGuests",
         security = @SecurityRequirement(name = "BearerAuth")
     )
     @ApiResponses(
         value = {
             @ApiResponse(
                 responseCode = "201",
-                description = "Notificação criada"
+                description = "Convite cadastrado"
             ),
             @ApiResponse(
                 responseCode = "401",
@@ -87,206 +86,26 @@ public class NotificationController {
         }
     )
     @PostMapping
-    public ResponseEntity<NotificationDTO> create(
+    public ResponseEntity<NotificationGuestDTO> create(
         @Valid
         @RequestBody
-        CreateNotificationDTO createNotificationDTO
+        CreateNotificationGuestDTO createNotificationGuestDTO
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(NotificationDTO.from(notificationInteractor.create(createNotificationDTO.toDomainObj())));
+        return ResponseEntity.status(HttpStatus.CREATED).body(NotificationGuestDTO.from(notificationGuestInteractor.create(createNotificationGuestDTO.toDomainObj())));
     }
 
     @PreAuthorize("hasAuthority('SCOPE_USER')")
     @Operation(
-        summary = "Atualizar notificação",
-        description = "Atualiza uma notificação de acordo com o corpo da requisição",
-        tags = "Notifications",
-        security = @SecurityRequirement(name = "BearerAuth")
-    )
-    @ApiResponses(
-        value = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Notificação atualizada"
-            ),
-            @ApiResponse(
-                responseCode = "401",
-                description = "Token de acesso inválido ou expirado",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = Void.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "404",
-                description = "Notificação não encontrada",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(
-                        implementation = StandardException.class
-                    )
-                )
-            ),
-            @ApiResponse(
-                responseCode = "406",
-                description = "Informações inválidas no corpo da requisição",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(
-                        implementation = StandardException.class
-                    )
-                )
-            ),
-            @ApiResponse(
-                responseCode = "500",
-                description = "Erro interno",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(
-                        implementation = StandardException.class
-                    )
-                )
-            ),
-        }
-    )
-    @PutMapping
-    public ResponseEntity<NotificationDTO> update(
-        @Valid
-        @RequestBody 
-        NotificationDTO notificationDTO
-    ) {
-        return ResponseEntity.ok(NotificationDTO.from(notificationInteractor.update(notificationDTO.toDomainObj())));
-    }
-
-    @PreAuthorize("hasAuthority('SCOPE_USER')")
-    @Operation(
-        summary = "Obter notificação",
-        description = "Obtém uma notificação de acordo com o ID",
-        tags = "Notifications",
-        security = @SecurityRequirement(name = "BearerAuth")
-    )
-    @ApiResponses(
-        value = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Notificação obtida"
-            ),
-            @ApiResponse(
-                responseCode = "401",
-                description = "Token de acesso inválido ou expirado",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = Void.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "404",
-                description = "Notificação não encontrada",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(
-                        implementation = StandardException.class
-                    )
-                )
-            ),
-            @ApiResponse(
-                responseCode = "500",
-                description = "Erro interno",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(
-                        implementation = StandardException.class
-                    )
-                )
-            ),
-        }
-    )
-    @GetMapping("/{id}")
-    public ResponseEntity<NotificationDTO> findById(
-        @Parameter(
-            description = "Identificador da notificação",
-            example = "123e4567-e89b-12d3-a456-426614174000"
-        )
-        @PathVariable
-        UUID id
-    ) {
-        return ResponseEntity.ok(NotificationDTO.from(notificationInteractor.findById(id)));
-    }
-
-    @PreAuthorize("hasAuthority('SCOPE_USER')")
-    @Operation(
-        summary = "Obter notificações",
-        description = "Obtém todas as notificações de acordo com os parâmetros da requisição",
-        tags = "Notifications",
-        security = @SecurityRequirement(name = "BearerAuth")
-    )
-    @ApiResponses(
-        value = {
-            @ApiResponse(
-                responseCode = "201",
-                description = "Notificações obtidas"
-            ),
-            @ApiResponse(
-                responseCode = "401",
-                description = "Token de acesso inválido ou expirado",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = Void.class)
-                )
-            ),
-            @ApiResponse(
-                responseCode = "500",
-                description = "Erro interno",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(
-                        implementation = StandardException.class
-                    )
-                )
-            ),
-        }
-    )
-    @GetMapping
-    public ResponseEntity<Page<NotificationDTO>> findAll(
-        @Parameter(
-            name = "commitmentId",
-            description = "Id do compromisso"
-        )
-        @RequestParam(required = true) UUID commitmentId,
-
-        @Parameter(
-            name = "page",
-            description = "Página atual da paginação"
-        )
-        @RequestParam(required = true) Integer page,
-        
-        @Parameter(
-            name = "size",
-            description = "Quantidade de itens por página"
-        )
-        @RequestParam(required = true) Integer size
-    ) {
-        List<NotificationDTO> notifications = notificationInteractor.findByCommitmentId(commitmentId, page, size)
-            .stream()
-            .map(NotificationDTO::from)
-            .toList();
-
-        Page<NotificationDTO> notificationsPage = new PageImpl<>(notifications, PageRequest.of(page, size), notifications.size());
-
-        return ResponseEntity.status(HttpStatus.OK).body(notificationsPage);
-    }
-
-    @PreAuthorize("hasAuthority('SCOPE_USER')")
-    @Operation(
-        summary = "Deletar notificação",
-        description = "Deleta uma notificação de acordo com o ID",
-        tags = "Notifications",
+        summary = "Deletar convite para notificação",
+        description = "Deleta um convite para notificação de acordo com o ID",
+        tags = "NotificationGuests",
         security = @SecurityRequirement(name = "BearerAuth")
     )
     @ApiResponses(
         value = {
             @ApiResponse(
                 responseCode = "204",
-                description = "Notificação deletada"
+                description = "Convite deletado"
             ),
             @ApiResponse(
                 responseCode = "401",
@@ -298,7 +117,7 @@ public class NotificationController {
             ),
             @ApiResponse(
                 responseCode = "404",
-                description = "Notificação não encontrada",
+                description = "Convite não encontrado",
                 content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(
@@ -321,14 +140,135 @@ public class NotificationController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
         @Parameter(
-            description = "Identificador da notificação",
+            description = "Identificador do convite",
             example = "123e4567-e89b-12d3-a456-426614174000"
         )
-        @PathVariable
-        UUID id
+        @PathVariable UUID id
     ) {
-        notificationInteractor.deleteById(id);
+        notificationGuestInteractor.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
+    @Operation(
+        summary = "Obter convite para notificação",
+        description = "Obtém um convite para notificação de acordo com o ID",
+        tags = "NotificationGuests",
+        security = @SecurityRequirement(name = "BearerAuth")
+    )
+    @ApiResponses(
+        value = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Convite obtido"
+            ),
+            @ApiResponse(
+                responseCode = "401",
+                description = "Token de acesso inválido ou expirado",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Void.class)
+                )
+            ),
+            @ApiResponse(
+                responseCode = "404",
+                description = "Convite não encontrado",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                        implementation = StandardException.class
+                    )
+                )
+            ),
+            @ApiResponse(
+                responseCode = "500",
+                description = "Erro interno",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                        implementation = StandardException.class
+                    )
+                )
+            ),
+        }
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<NotificationGuestDTO> findById(
+        @Parameter(
+            description = "Identificador do convite",
+            example = "123e4567-e89b-12d3-a456-426614174000"
+        )
+        @PathVariable UUID id
+    ) {
+        return ResponseEntity.ok(NotificationGuestDTO.from(notificationGuestInteractor.findById(id)));
+    }
+
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
+    @Operation(
+        summary = "Obter convites para notificação",
+        description = "Obtém todos os convites para notificação de acordo com os parâmetros da requisição",
+        tags = "NotificationGuests",
+        security = @SecurityRequirement(name = "BearerAuth")
+    )
+    @ApiResponses(
+        value = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Convites obtidos"
+            ),
+            @ApiResponse(
+                responseCode = "401",
+                description = "Token de acesso inválido ou expirado",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Void.class)
+                )
+            ),
+            @ApiResponse(
+                responseCode = "500",
+                description = "Erro interno",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                        implementation = StandardException.class
+                    )
+                )
+            ),
+        }
+    )
+    @GetMapping
+    public ResponseEntity<Page<NotificationGuestDTO>> findAll(
+        @Parameter(
+            name = "userId",
+            description = "Identificador do usuário"
+        )
+        @RequestParam(required = true) UUID userId,
+
+        @Parameter(
+            name = "statusId",
+            description = "Identificador do status"
+        )
+        @RequestParam(required = false) UUID statusId,
+
+        @Parameter(
+            name = "page",
+            description = "Página atual da paginação"
+        )
+        @RequestParam(required = true) Integer page,
+        
+        @Parameter(
+            name = "size",
+            description = "Quantidade de itens por página"
+        )
+        @RequestParam(required = true) Integer size
+    ) {
+        List<NotificationGuestDTO> notifications = notificationGuestInteractor.findByUserId(userId, statusId, page, size)
+            .stream()
+            .map(NotificationGuestDTO::from)
+            .toList();
+
+        Page<NotificationGuestDTO> notificationGuestsPage = new PageImpl<>(notifications, PageRequest.of(page, size), notifications.size());
+
+        return ResponseEntity.status(HttpStatus.OK).body(notificationGuestsPage);
     }
 }
