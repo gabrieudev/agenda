@@ -16,7 +16,7 @@ public interface UserGateway {
     boolean existsById(UUID id);
     User update(User user);
     void delete(UUID id);
-    List<User> search(String param, Integer page, Integer size);
+    List<User> search(String param, String email, Integer page, Integer size);
     String encode(String password);
     boolean matches(String rawPassword, String encryptedPassword);
 }

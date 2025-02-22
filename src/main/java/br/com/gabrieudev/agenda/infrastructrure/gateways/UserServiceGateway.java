@@ -81,8 +81,8 @@ public class UserServiceGateway implements UserGateway {
 
     @Override
     @Transactional(readOnly = true)
-    public List<User> search(String param, Integer page, Integer size) {
-        return userRepository.search(param, PageRequest.of(page, size))
+    public List<User> search(String param, String email, Integer page, Integer size) {
+        return userRepository.findAll(param, email, PageRequest.of(page, size))
             .stream()
             .map(UserModel::toDomainObj)
             .toList();

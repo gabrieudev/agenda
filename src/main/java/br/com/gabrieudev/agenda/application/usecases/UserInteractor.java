@@ -75,8 +75,8 @@ public class UserInteractor {
         userGateway.delete(id);
     }
 
-    public List<User> search(String param, Integer page, Integer size) {
-        return userGateway.search(param, page, size);
+    public List<User> search(String param, String email, Integer page, Integer size) {
+        return userGateway.search(param, email, page, size);
     }
 
     public User findByEmail(String email) {

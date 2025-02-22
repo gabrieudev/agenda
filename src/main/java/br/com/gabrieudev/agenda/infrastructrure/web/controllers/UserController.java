@@ -210,6 +210,18 @@ public class UserController {
     @GetMapping
     public ResponseEntity<Page<UserDTO>> search(
         @Parameter(
+            name = "param",
+            description = "Parâmetro de busca"
+        )
+        @RequestParam(required = false) String param,
+
+        @Parameter(
+            name = "email",
+            description = "Email do usuário"
+        )
+        @RequestParam(required = false) String email,
+
+        @Parameter(
             name = "page",
             description = "Página atual da paginação"
         )
@@ -219,15 +231,9 @@ public class UserController {
             name = "size",
             description = "Quantidade de itens por página"
         )
-        @RequestParam(required = true) Integer size,
-        
-        @Parameter(
-            name = "param",
-            description = "Parâmetro de busca"
-        )
-        @RequestParam(required = false) String param
+        @RequestParam(required = true) Integer size
     ) {
-        List<UserDTO> users = userInteractor.search(param, page, size).stream()
+        List<UserDTO> users = userInteractor.search(param, email, page, size).stream()
             .map(UserDTO::from)
             .toList();
 
