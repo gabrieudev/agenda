@@ -65,7 +65,7 @@ public class DatabaseLoader implements CommandLineRunner {
             StatusModel pendingStatus = new StatusModel();
             pendingStatus.setName("Pendente");
             StatusModel completedStatus = new StatusModel();
-            completedStatus.setName("Concluído");
+            completedStatus.setName("Concluido");
 
             userRepository.save(user);
             roleRepository.save(userRole);

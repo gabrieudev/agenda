@@ -6,16 +6,20 @@ import java.util.UUID;
 
 import br.com.gabrieudev.agenda.application.gateways.CommitmentGateway;
 import br.com.gabrieudev.agenda.application.gateways.StatusGateway;
+import br.com.gabrieudev.agenda.application.gateways.TaskGateway;
 import br.com.gabrieudev.agenda.domain.entities.Commitment;
 import br.com.gabrieudev.agenda.domain.entities.Status;
+import br.com.gabrieudev.agenda.domain.entities.Task;
 
 public class CommitmentInteractor {
     private final CommitmentGateway commitmentGateway;
     private final StatusGateway statusGateway;
+    private final TaskGateway taskGateway;
 
-    public CommitmentInteractor(CommitmentGateway commitmentGateway, StatusGateway statusGateway) {
+    public CommitmentInteractor(CommitmentGateway commitmentGateway, StatusGateway statusGateway, TaskGateway taskGateway) {
         this.commitmentGateway = commitmentGateway;
         this.statusGateway = statusGateway;
+        this.taskGateway = taskGateway;
     }
 
     public Commitment create(Commitment commitment, String token) {
@@ -39,6 +43,10 @@ public class CommitmentInteractor {
     }
 
     public void deleteById(UUID id) {
+        List<Task> tasks = taskGateway.findByCommitmentId(id, null, null);
+
+        tasks.forEach(task -> taskGateway.deleteById(task.getId()));
+
         commitmentGateway.deleteById(id);
     }
 
