@@ -177,7 +177,7 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.OK).body(RoleDTO.from(roleInteractor.update(updateRoleDTO.toDomainObj())));
     }
 
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     @Operation(
         summary = "Obter roles",
         description = "Obtém todas as roles",
@@ -246,7 +246,7 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.OK).body(rolesPage);
     }
 
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     @Operation(
         summary = "Obter role por ID",
         description = "Obtém uma role de acordo com o ID no parâmetro UUID",
