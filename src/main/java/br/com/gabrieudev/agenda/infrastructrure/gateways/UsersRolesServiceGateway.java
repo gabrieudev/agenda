@@ -1,5 +1,6 @@
 package br.com.gabrieudev.agenda.infrastructrure.gateways;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -84,4 +85,23 @@ public class UsersRolesServiceGateway implements UsersRolesGateway {
         return usersRolesRepository.existsByRole(role);
     }
 
+    @Override
+    public List<UsersRoles> findByUserId(UUID userId) {
+        UserModel user = userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+
+        return usersRolesRepository.findByUser(user)
+            .stream()
+            .map(UsersRolesModel::toDomainObj)
+            .toList();
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        if (!existsById(id)) {
+            throw new EntityNotFoundException("Usuário não possui esta role");
+        }
+
+        usersRolesRepository.deleteById(id);
+    }
 }

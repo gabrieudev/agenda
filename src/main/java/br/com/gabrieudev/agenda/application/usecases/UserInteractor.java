@@ -72,6 +72,12 @@ public class UserInteractor {
     }
 
     public void delete(UUID id) {
+        List<UsersRoles> usersRoles = usersRolesGateway.findByUserId(id);
+
+        usersRoles.forEach(userRole -> {
+            usersRolesGateway.deleteById(userRole.getId());
+        });
+
         userGateway.delete(id);
     }
 
