@@ -81,7 +81,9 @@ public class NotificationGuestServiceGateway implements NotificationGuestGateway
         if (!currentStatus.equals(newStatus)) {
             notificationGuestToUpdate.setStatus(newStatus);
         }
-        
+
+        notificationGuestToUpdate.setId(notificationGuest.getId());
+
         return notificationGuestRepository.save(notificationGuestToUpdate).toDomainObj();
     }
 }
