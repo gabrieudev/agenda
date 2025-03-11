@@ -242,13 +242,19 @@ public class NotificationGuestController {
             name = "userId",
             description = "Identificador do usuário"
         )
-        @RequestParam(required = true) UUID userId,
+        @RequestParam(required = false) UUID userId,
 
         @Parameter(
             name = "statusId",
             description = "Identificador do status"
         )
         @RequestParam(required = false) UUID statusId,
+
+        @Parameter(
+            name = "notificationId",
+            description = "Identificador da notificação"
+        )
+        @RequestParam(required = false) UUID notificationId,
 
         @Parameter(
             name = "page",
@@ -262,7 +268,7 @@ public class NotificationGuestController {
         )
         @RequestParam(required = true) Integer size
     ) {
-        List<NotificationGuestDTO> notifications = notificationGuestInteractor.findByUserId(userId, statusId, page, size)
+        List<NotificationGuestDTO> notifications = notificationGuestInteractor.findAllByCriteria(userId, statusId, notificationId, page, size)
             .stream()
             .map(NotificationGuestDTO::from)
             .toList();

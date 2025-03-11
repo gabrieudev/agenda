@@ -175,7 +175,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(UserDTO.from(userInteractor.findById(id)));
     }
 
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
     @Operation(
         summary = "Obter usuários",
         description = "Obtém todos os usuários",

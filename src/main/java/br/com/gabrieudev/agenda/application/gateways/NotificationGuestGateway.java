@@ -10,5 +10,5 @@ public interface NotificationGuestGateway {
     NotificationGuest findById(UUID id);
     void deleteById(UUID id);
     boolean existsById(UUID id);
-    List<NotificationGuest> findByUserId(UUID userId, UUID statusId, Integer page, Integer size);
+    List<NotificationGuest> findAllByCriteria(UUID userId, UUID statusId, UUID notificationId, Integer page, Integer size);
 }

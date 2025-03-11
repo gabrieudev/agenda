@@ -17,18 +17,20 @@ import br.com.gabrieudev.agenda.infrastructrure.persistence.models.NotificationM
 public interface NotificationGuestRepository extends JpaRepository<NotificationGuestModel, UUID> {
     @Query(
         value = """
-                SELECT n.* 
+                SELECT n.*
                 FROM notification_guests n
                 LEFT JOIN statuses s 
                     ON n.status_id = s.id
-                WHERE n.user_id = :p1
+                WHERE (:p1 IS NULL OR n.user_id = :p1)
                 AND (:p2 IS NULL OR s.id = :p2)
+                AND (:p3 IS NULL OR n.notification_id = :p3)
                 """,
         nativeQuery = true
     )
-    Page<NotificationGuestModel> findByUserId(
+    Page<NotificationGuestModel> findAllByCriteria(
         @Param("p1") UUID userId,
         @Param("p2") UUID statusId,
+        @Param("p3") UUID notificationId,
         Pageable pageable
     );
 

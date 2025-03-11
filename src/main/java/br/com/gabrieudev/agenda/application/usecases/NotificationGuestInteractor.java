@@ -37,7 +37,7 @@ public class NotificationGuestInteractor {
         return notificationGuestGateway.existsById(id);
     }
 
-    public List<NotificationGuest> findByUserId(UUID userId, UUID statusId, Integer page, Integer size) {
-        return notificationGuestGateway.findByUserId(userId, statusId, page, size);
+    public List<NotificationGuest> findAllByCriteria(UUID userId, UUID statusId, UUID notificationId, Integer page, Integer size) {
+        return notificationGuestGateway.findAllByCriteria(userId, statusId, notificationId, page, size);
     }
 }

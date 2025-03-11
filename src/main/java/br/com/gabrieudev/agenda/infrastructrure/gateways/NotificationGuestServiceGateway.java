@@ -56,8 +56,8 @@ public class NotificationGuestServiceGateway implements NotificationGuestGateway
 
     @Override
     @Transactional(readOnly = true)
-    public List<NotificationGuest> findByUserId(UUID userId, UUID statusId, Integer page, Integer size) {
-        return notificationGuestRepository.findByUserId(userId, statusId, PageRequest.of(page, size))
+    public List<NotificationGuest> findAllByCriteria(UUID userId, UUID statusId, UUID notificationId, Integer page, Integer size) {
+        return notificationGuestRepository.findAllByCriteria(userId, statusId, notificationId, PageRequest.of(page, size))
             .stream()
             .map(NotificationGuestModel::toDomainObj)
             .toList();
