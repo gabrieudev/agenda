@@ -12,13 +12,17 @@ import br.com.gabrieudev.agenda.application.exceptions.EntityNotFoundException;
 import br.com.gabrieudev.agenda.application.gateways.NotificationGuestGateway;
 import br.com.gabrieudev.agenda.domain.entities.NotificationGuest;
 import br.com.gabrieudev.agenda.infrastructrure.persistence.models.NotificationGuestModel;
+import br.com.gabrieudev.agenda.infrastructrure.persistence.models.StatusModel;
 import br.com.gabrieudev.agenda.infrastructrure.persistence.repositories.NotificationGuestRepository;
+import br.com.gabrieudev.agenda.infrastructrure.persistence.repositories.StatusRepository;
 
 public class NotificationGuestServiceGateway implements NotificationGuestGateway {
     private final NotificationGuestRepository notificationGuestRepository;
+    private final StatusRepository statusRepository;
 
-    public NotificationGuestServiceGateway(NotificationGuestRepository notificationGuestRepository) {
+    public NotificationGuestServiceGateway(NotificationGuestRepository notificationGuestRepository, StatusRepository statusRepository) {
         this.notificationGuestRepository = notificationGuestRepository;
+        this.statusRepository = statusRepository;
     }
 
     @Override
@@ -61,5 +65,24 @@ public class NotificationGuestServiceGateway implements NotificationGuestGateway
             .stream()
             .map(NotificationGuestModel::toDomainObj)
             .toList();
+    }
+
+    @Override
+    @CacheEvict(value = "NotificationGuests", key = "#notificationGuest.id")
+    public NotificationGuest update(NotificationGuest notificationGuest) {
+        NotificationGuestModel notificationGuestToUpdate = notificationGuestRepository.findById(notificationGuest.getId())
+            .orElseThrow(() -> new EntityNotFoundException("Notificação não encontrada"));
+
+        StatusModel currentStatus = notificationGuestToUpdate.getStatus();
+        StatusModel newStatus = statusRepository.findById(notificationGuest.getStatus().getId())
+            .orElseThrow(() -> new EntityNotFoundException("Status não encontrado"));
+
+        if (!currentStatus.equals(newStatus)) {
+            notificationGuestToUpdate.setStatus(newStatus);
+        }
+
+        notificationGuestToUpdate.update(notificationGuest);
+
+        return notificationGuestRepository.save(notificationGuestToUpdate).toDomainObj();
     }
 }

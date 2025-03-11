@@ -38,25 +38,27 @@ public class ScheduledTasks {
 
     @Scheduled(fixedRate = 60000)
     public void sendNotifications() {
-        log.info("Enviando notificações");
-
         List<NotificationModel> notifications = notificationRepository.findByDueDateBeforeAndIsSendedFalse(LocalDateTime.now());
-        
+
         notifications.forEach(notification -> {
             List<NotificationGuestModel> notificationGuests = notificationGuestRepository.findByNotification(notification);
 
-            emailService.sendEmail(notification.getCommitment().getUser().getEmail(), "Notificação de Agenda Digital", notification.getMessage());
-
-            notificationGuests.forEach(notificationGuest -> {
-                if (notificationGuest.getStatus().getName().equals("Concluido")) {
-                    emailService.sendEmail(notificationGuest.getUser().getEmail(), "Notificação de Agenda Digital", notification.getMessage());
-                }
-            });
+            sendEmailToCommitmentOwner(notification);
+            sendEmailToGuests(notificationGuests, notification);
 
             notification.setIsSended(true);
-
             notificationRepository.save(notification);
         });
+    }
+
+    private void sendEmailToCommitmentOwner(NotificationModel notification) {
+        emailService.sendEmail(notification.getCommitment().getUser().getEmail(), "Notificação de Agenda Digital", notification.getMessage());
+    }
+
+    private void sendEmailToGuests(List<NotificationGuestModel> notificationGuests, NotificationModel notification) {
+        notificationGuests.stream()
+            .filter(notificationGuest -> notificationGuest.getStatus().getName().equals("Concluido"))
+            .forEach(notificationGuest -> emailService.sendEmail(notificationGuest.getUser().getEmail(), "Notificação de Agenda Digital", notification.getMessage()));
     }
 
     @Scheduled(fixedRate = 60000)

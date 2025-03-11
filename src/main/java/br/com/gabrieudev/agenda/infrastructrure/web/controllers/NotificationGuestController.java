@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,8 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.gabrieudev.agenda.application.exceptions.StandardException;
 import br.com.gabrieudev.agenda.application.usecases.NotificationGuestInteractor;
+import br.com.gabrieudev.agenda.domain.entities.NotificationGuest;
 import br.com.gabrieudev.agenda.infrastructrure.web.dtos.notificationguest.CreateNotificationGuestDTO;
 import br.com.gabrieudev.agenda.infrastructrure.web.dtos.notificationguest.NotificationGuestDTO;
+import br.com.gabrieudev.agenda.infrastructrure.web.dtos.notificationguest.UpdateNotificationGuestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -276,5 +279,49 @@ public class NotificationGuestController {
         Page<NotificationGuestDTO> notificationGuestsPage = new PageImpl<>(notifications, PageRequest.of(page, size), notifications.size());
 
         return ResponseEntity.status(HttpStatus.OK).body(notificationGuestsPage);
+    }
+
+    @PreAuthorize("hasAuthority('SCOPE_USER')")
+    @Operation(
+        summary = "Atualizar convite para notificação",
+        description = "Atualiza um convite para notificação",
+        tags = "NotificationGuests",
+        security = @SecurityRequirement(name = "BearerAuth")
+    )
+    @ApiResponses(
+        value = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Convite atualizado"
+            ),
+            @ApiResponse(
+                responseCode = "401",
+                description = "Token de acesso inválido ou expirado",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Void.class)
+                )
+            ),
+            @ApiResponse(
+                responseCode = "406",
+                description = "Informações inválidas no corpo da requisição",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(
+                        implementation = StandardException.class
+                    )
+                )
+            )
+        }
+    )
+    @PutMapping
+    public ResponseEntity<NotificationGuestDTO> update(
+        @Valid
+        @RequestBody
+        UpdateNotificationGuestDTO updateNotificationGuestDTO
+    ) {
+        NotificationGuest notificationGuest = notificationGuestInteractor.update(updateNotificationGuestDTO.toDomainObj());
+
+        return ResponseEntity.status(HttpStatus.OK).body(NotificationGuestDTO.from(notificationGuest));
     }
 }

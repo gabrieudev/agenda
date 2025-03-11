@@ -44,6 +44,12 @@ public class NotificationGuestModel {
         return new ModelMapper().map(notificationGuest, NotificationGuestModel.class);
     }
 
+    public void update(NotificationGuest notificationGuest) {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+        modelMapper.map(notificationGuest, this);
+    }
+
     public NotificationGuest toDomainObj() {
         return new ModelMapper().map(this, NotificationGuest.class);
     }

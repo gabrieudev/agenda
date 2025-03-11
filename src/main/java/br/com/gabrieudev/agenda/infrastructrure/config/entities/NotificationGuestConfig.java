@@ -8,6 +8,7 @@ import br.com.gabrieudev.agenda.application.gateways.StatusGateway;
 import br.com.gabrieudev.agenda.application.usecases.NotificationGuestInteractor;
 import br.com.gabrieudev.agenda.infrastructrure.gateways.NotificationGuestServiceGateway;
 import br.com.gabrieudev.agenda.infrastructrure.persistence.repositories.NotificationGuestRepository;
+import br.com.gabrieudev.agenda.infrastructrure.persistence.repositories.StatusRepository;
 
 @Configuration
 public class NotificationGuestConfig {
@@ -17,7 +18,7 @@ public class NotificationGuestConfig {
     }
 
     @Bean
-    NotificationGuestGateway notificationGuestGateway(NotificationGuestRepository notificationGuestRepository) {
-        return new NotificationGuestServiceGateway(notificationGuestRepository);
+    NotificationGuestGateway notificationGuestGateway(NotificationGuestRepository notificationGuestRepository, StatusRepository statusRepository) {
+        return new NotificationGuestServiceGateway(notificationGuestRepository, statusRepository);
     }
 }

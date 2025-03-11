@@ -40,4 +40,8 @@ public class NotificationGuestInteractor {
     public List<NotificationGuest> findAllByCriteria(UUID userId, UUID statusId, UUID notificationId, Integer page, Integer size) {
         return notificationGuestGateway.findAllByCriteria(userId, statusId, notificationId, page, size);
     }
+
+    public NotificationGuest update(NotificationGuest notificationGuest) {
+        return notificationGuestGateway.update(notificationGuest);
+    }
 }
