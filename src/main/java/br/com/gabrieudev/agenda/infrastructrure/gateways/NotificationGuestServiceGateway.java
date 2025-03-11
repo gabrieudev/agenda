@@ -69,13 +69,14 @@ public class NotificationGuestServiceGateway implements NotificationGuestGateway
 
     @Override
     @CacheEvict(value = "NotificationGuests", key = "#notificationGuest.id")
+    @Transactional
     public NotificationGuest update(NotificationGuest notificationGuest) {
         NotificationGuestModel notificationGuestToUpdate = notificationGuestRepository.findById(notificationGuest.getId())
-            .orElseThrow(() -> new EntityNotFoundException("Notificação não encontrada"));
+            .orElseThrow(() -> new EntityNotFoundException("Notificação não encontrada"));
 
         StatusModel currentStatus = notificationGuestToUpdate.getStatus();
         StatusModel newStatus = statusRepository.findById(notificationGuest.getStatus().getId())
-            .orElseThrow(() -> new EntityNotFoundException("Status não encontrado"));
+            .orElseThrow(() -> new EntityNotFoundException("Status não encontrado"));
 
         if (!currentStatus.equals(newStatus)) {
             notificationGuestToUpdate.setStatus(newStatus);
