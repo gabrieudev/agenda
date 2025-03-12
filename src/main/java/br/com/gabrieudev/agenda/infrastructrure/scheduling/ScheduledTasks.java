@@ -52,7 +52,7 @@ public class ScheduledTasks {
     }
 
     private void sendEmailToCommitmentOwner(NotificationModel notification) {
-        emailService.sendEmail(notification.getCommitment().getUser().getEmail(), "Notificação de Agenda Digital\n" + "Compromisso: " + notification.getCommitment().getTitle() + "\nMensagem:", notification.getMessage());
+        emailService.sendEmail(notification.getCommitment().getUser().getEmail(), "Notificação de Agenda Digital", "Compromisso: " + notification.getCommitment().getTitle() + "\nMensagem: " +notification.getMessage());
     }
 
     private void sendEmailToGuests(List<NotificationGuestModel> notificationGuests, NotificationModel notification) {
