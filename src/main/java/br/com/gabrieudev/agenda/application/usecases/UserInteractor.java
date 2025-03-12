@@ -92,19 +92,18 @@ public class UserInteractor {
 
         List<Commitment> commitments = commitmentGateway.findByUserId(id, null, null, null, 0, Integer.MAX_VALUE);
 
-        List<NotificationGuest> notificationGuests = notificationGuestGateway.findAllByCriteria(id, null, null, 0, Integer.MAX_VALUE);
-
-        notificationGuests.forEach(notificationGuest -> {
-            notificationGuestGateway.deleteById(notificationGuest.getId());
-        });
-
         commitments.forEach(commitment -> {
             List<Task> tasks = taskGateway.findByCommitmentId(commitment.getId(), null, null);
-            List<Notification> notifications = notificationGateway.findByCommitmentId(commitment.getId(), 0, Integer.MAX_VALUE);
-
+            
             tasks.forEach(task -> taskGateway.deleteById(task.getId()));
 
+            List<Notification> notifications = notificationGateway.findByCommitmentId(commitment.getId(), 0, Integer.MAX_VALUE);
+
             notifications.forEach(notification -> {
+                List<NotificationGuest> guests = notificationGuestGateway.findAllByCriteria(null, null, notification.getId(), 0, Integer.MAX_VALUE);
+                
+                guests.forEach(guest -> notificationGuestGateway.deleteById(guest.getId()));
+
                 notificationGateway.deleteById(notification.getId());
             });
 
