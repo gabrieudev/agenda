@@ -28,7 +28,6 @@ public class UserInteractor {
     private final TaskGateway taskGateway;
     private final NotificationGateway notificationGateway;
     private final NotificationGuestGateway notificationGuestGateway;
-    private final NotificationGateway notificationInteractor;
     
     public UserInteractor(UserGateway userGateway, RoleGateway roleGateway, UsersRolesGateway usersRolesGateway, CommitmentGateway commitmentGateway, TaskGateway taskGateway, NotificationGateway notificationGateway, NotificationGuestGateway notificationGuestGateway) {
         this.userGateway = userGateway;
@@ -38,7 +37,6 @@ public class UserInteractor {
         this.taskGateway = taskGateway;
         this.notificationGateway = notificationGateway;
         this.notificationGuestGateway = notificationGuestGateway;
-        this.notificationInteractor = notificationGateway;
     }
 
     public User signup(User user) {
@@ -97,7 +95,6 @@ public class UserInteractor {
         List<NotificationGuest> notificationGuests = notificationGuestGateway.findAllByCriteria(id, null, null, 0, Integer.MAX_VALUE);
 
         notificationGuests.forEach(notificationGuest -> {
-            notificationGateway.deleteById(notificationGuest.getNotification().getId());
             notificationGuestGateway.deleteById(notificationGuest.getId());
         });
 
@@ -105,11 +102,11 @@ public class UserInteractor {
             List<Task> tasks = taskGateway.findByCommitmentId(commitment.getId(), null, null);
             List<Notification> notifications = notificationGateway.findByCommitmentId(commitment.getId(), 0, Integer.MAX_VALUE);
 
-            notifications.forEach(notification -> {
-                notificationInteractor.deleteById(notification.getId());
-            });
-
             tasks.forEach(task -> taskGateway.deleteById(task.getId()));
+
+            notifications.forEach(notification -> {
+                notificationGateway.deleteById(notification.getId());
+            });
 
             commitmentGateway.deleteById(commitment.getId());
         });
