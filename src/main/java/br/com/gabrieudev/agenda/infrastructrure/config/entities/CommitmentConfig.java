@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 
 import br.com.gabrieudev.agenda.application.gateways.CommitmentGateway;
+import br.com.gabrieudev.agenda.application.gateways.NotificationGateway;
+import br.com.gabrieudev.agenda.application.gateways.NotificationGuestGateway;
 import br.com.gabrieudev.agenda.application.gateways.StatusGateway;
 import br.com.gabrieudev.agenda.application.gateways.TaskGateway;
 import br.com.gabrieudev.agenda.application.usecases.CommitmentInteractor;
@@ -17,8 +19,8 @@ import br.com.gabrieudev.agenda.infrastructrure.persistence.repositories.UserRep
 @Configuration
 public class CommitmentConfig {
     @Bean
-    CommitmentInteractor commitmentInteractor(CommitmentGateway commitmentGateway, StatusGateway statusGateway, TaskGateway taskGateway) {
-        return new CommitmentInteractor(commitmentGateway, statusGateway, taskGateway);
+    CommitmentInteractor commitmentInteractor(CommitmentGateway commitmentGateway, StatusGateway statusGateway, TaskGateway taskGateway, NotificationGateway notificationGateway, NotificationGuestGateway notificationGuestGateway) {
+        return new CommitmentInteractor(commitmentGateway, statusGateway, taskGateway, notificationGuestGateway, notificationGateway);
     }
 
     @Bean
