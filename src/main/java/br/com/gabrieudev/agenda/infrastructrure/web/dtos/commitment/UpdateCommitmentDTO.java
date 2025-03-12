@@ -46,7 +46,6 @@ public class UpdateCommitmentDTO {
     @NotNull(message = "Categoria obrigatória")
     private CommitmentCategoryDTO category;
 
-    @NotNull(message = "Status obrigatório")
     private StatusDTO status;
     
     @Schema(
