@@ -5,10 +5,18 @@ import java.util.List;
 import java.util.UUID;
 
 import br.com.gabrieudev.agenda.application.exceptions.EntityAlreadyExistsException;
+import br.com.gabrieudev.agenda.application.gateways.CommitmentGateway;
+import br.com.gabrieudev.agenda.application.gateways.NotificationGateway;
+import br.com.gabrieudev.agenda.application.gateways.NotificationGuestGateway;
 import br.com.gabrieudev.agenda.application.gateways.RoleGateway;
+import br.com.gabrieudev.agenda.application.gateways.TaskGateway;
 import br.com.gabrieudev.agenda.application.gateways.UserGateway;
 import br.com.gabrieudev.agenda.application.gateways.UsersRolesGateway;
+import br.com.gabrieudev.agenda.domain.entities.Commitment;
+import br.com.gabrieudev.agenda.domain.entities.Notification;
+import br.com.gabrieudev.agenda.domain.entities.NotificationGuest;
 import br.com.gabrieudev.agenda.domain.entities.Role;
+import br.com.gabrieudev.agenda.domain.entities.Task;
 import br.com.gabrieudev.agenda.domain.entities.User;
 import br.com.gabrieudev.agenda.domain.entities.UsersRoles;
 
@@ -16,11 +24,21 @@ public class UserInteractor {
     private final UserGateway userGateway;
     private final RoleGateway roleGateway;
     private final UsersRolesGateway usersRolesGateway;
+    private final CommitmentGateway commitmentGateway;
+    private final TaskGateway taskGateway;
+    private final NotificationGateway notificationGateway;
+    private final NotificationGuestGateway notificationGuestGateway;
+    private final NotificationGateway notificationInteractor;
     
-    public UserInteractor(UserGateway userGateway, RoleGateway roleGateway, UsersRolesGateway usersRolesGateway) {
+    public UserInteractor(UserGateway userGateway, RoleGateway roleGateway, UsersRolesGateway usersRolesGateway, CommitmentGateway commitmentGateway, TaskGateway taskGateway, NotificationGateway notificationGateway, NotificationGuestGateway notificationGuestGateway) {
         this.userGateway = userGateway;
         this.roleGateway = roleGateway;
         this.usersRolesGateway = usersRolesGateway;
+        this.commitmentGateway = commitmentGateway;
+        this.taskGateway = taskGateway;
+        this.notificationGateway = notificationGateway;
+        this.notificationGuestGateway = notificationGuestGateway;
+        this.notificationInteractor = notificationGateway;
     }
 
     public User signup(User user) {
@@ -73,6 +91,28 @@ public class UserInteractor {
 
     public void delete(UUID id) {
         List<UsersRoles> usersRoles = usersRolesGateway.findByUserId(id);
+
+        List<Commitment> commitments = commitmentGateway.findByUserId(id, null, null, null, 0, Integer.MAX_VALUE);
+
+        List<NotificationGuest> notificationGuests = notificationGuestGateway.findAllByCriteria(id, null, null, 0, Integer.MAX_VALUE);
+
+        notificationGuests.forEach(notificationGuest -> {
+            notificationGateway.deleteById(notificationGuest.getNotification().getId());
+            notificationGuestGateway.deleteById(notificationGuest.getId());
+        });
+
+        commitments.forEach(commitment -> {
+            List<Task> tasks = taskGateway.findByCommitmentId(commitment.getId(), null, null);
+            List<Notification> notifications = notificationGateway.findByCommitmentId(commitment.getId(), 0, Integer.MAX_VALUE);
+
+            notifications.forEach(notification -> {
+                notificationInteractor.deleteById(notification.getId());
+            });
+
+            tasks.forEach(task -> taskGateway.deleteById(task.getId()));
+
+            commitmentGateway.deleteById(commitment.getId());
+        });
 
         usersRoles.forEach(userRole -> {
             usersRolesGateway.deleteById(userRole.getId());
