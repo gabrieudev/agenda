@@ -58,7 +58,7 @@ public class ScheduledTasks {
     private void sendEmailToGuests(List<NotificationGuestModel> notificationGuests, NotificationModel notification) {
         notificationGuests.stream()
             .filter(notificationGuest -> notificationGuest.getStatus().getName().equals("Concluido"))
-            .forEach(notificationGuest -> emailService.sendEmail(notificationGuest.getUser().getEmail(), "Notificação de Agenda Digital", notification.getMessage()));
+            .forEach(notificationGuest -> emailService.sendEmail(notificationGuest.getUser().getEmail(), "Notificação de Agenda Digital", "Compromisso: " + notification.getCommitment().getTitle() + "\nMensagem: " +notification.getMessage()));
     }
 
     @Scheduled(fixedRate = 60000)
